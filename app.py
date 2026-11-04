@@ -29,6 +29,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
 TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 REF_DIR = os.path.join(BASE_DIR, "reference_audio")
+SAMPLES_DIR = os.path.join(BASE_DIR, "samples")
 DEFAULT_REF_PATH = os.path.join(REF_DIR, "reference_krsna.mp3")
 
 app = FastAPI(
@@ -84,6 +85,54 @@ async def get_reference_audio():
         media_type="audio/mpeg",
         filename="reference_krsna.mp3"
     )
+
+
+@app.get("/api/samples")
+async def get_sample_audios():
+    """Returns curated demo samples for instant one-click testing."""
+    samples = [
+        {
+            "id": "native",
+            "name": "Native Sanskrit Recitation",
+            "file": "sample_native_95.wav",
+            "badge": "High Accuracy (~95%)",
+            "badge_color": "emerald",
+            "desc": "Traditional Vedic Vedic chant articulation with authentic retroflex /k-r-sh-n-aa/"
+        },
+        {
+            "id": "student",
+            "name": "Fluent Student Speaker",
+            "file": "sample_student_73.wav",
+            "badge": "Good (~73%)",
+            "badge_color": "blue",
+            "desc": "Standard conversational pronunciation with slight timing & pitch deviations"
+        },
+        {
+            "id": "mispronounced",
+            "name": "Mispronounced Articulation",
+            "file": "sample_mispronounced_55.wav",
+            "badge": "Needs Work (~55%)",
+            "badge_color": "amber",
+            "desc": "Colloquial 'kishna' missing retroflex r-vowel and nasal consonant alignment"
+        }
+    ]
+    return JSONResponse(samples)
+
+
+@app.get("/api/sample/{sample_id}")
+async def get_sample_file(sample_id: str):
+    """Stream a selected sample audio file."""
+    mapping = {
+        "native": "sample_native_95.wav",
+        "student": "sample_student_73.wav",
+        "mispronounced": "sample_mispronounced_55.wav"
+    }
+    if sample_id not in mapping:
+        raise HTTPException(status_code=404, detail="Sample ID not found")
+    file_path = os.path.join(SAMPLES_DIR, mapping[sample_id])
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="Sample audio file is missing on disk")
+    return FileResponse(file_path, media_type="audio/wav", filename=mapping[sample_id])
 
 
 @app.post("/api/assess")

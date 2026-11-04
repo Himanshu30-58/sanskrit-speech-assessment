@@ -1,416 +1,776 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sanskrit Pronunciation Assessment | CS30033</title>
+  <title>Vāc-Bodha (वाग्बोध) — Sanskrit Pronunciation Assessment Studio | CS30033</title>
+  
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            display: ['"Space Grotesk"', 'sans-serif'],
+            devanagari: ['"Noto Serif Devanagari"', 'serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+              900: '#064e3b',
+            },
+            sanskrit: {
+              gold: '#fbbf24',
+              saffron: '#f97316',
+              maroon: '#991b1b',
+            }
+          },
+          boxShadow: {
+            'glow-emerald': '0 0 25px -5px rgba(16, 185, 129, 0.4)',
+            'glow-amber': '0 0 25px -5px rgba(245, 158, 11, 0.4)',
+            'glow-cyan': '0 0 25px -5px rgba(6, 182, 212, 0.4)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Noto+Serif+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Noto+Serif+Devanagari:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
   <style>
-    body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
     }
-    .devanagari {
-      font-family: 'Noto Serif Devanagari', serif;
+    ::-webkit-scrollbar-track {
+      background: #0b0f19;
     }
-    .gradient-header {
-      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 4px;
     }
-    .glass-card {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(12px);
+    ::-webkit-scrollbar-thumb:hover {
+      background: #334155;
+    }
+
+    /* Cosmic Grid Background */
+    .cosmic-grid {
+      background-size: 32px 32px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    }
+
+    /* Radial Ambient Orbs */
+    .ambient-orb-1 {
+      position: absolute;
+      top: -150px;
+      left: 20%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+      filter: blur(80px);
+    }
+    .ambient-orb-2 {
+      position: absolute;
+      top: 150px;
+      right: 10%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
+      pointer-events: none;
+      filter: blur(90px);
+    }
+
+    /* Pulsing Record Animation */
+    @keyframes pulse-record-ring {
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.8); }
+      70% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
     }
     .pulse-record {
-      animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+      animation: pulse-record-ring 1.6s infinite cubic-bezier(0.66, 0, 0, 1);
     }
-    @keyframes pulse-ring {
-      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-      70% { transform: scale(1.05); box-shadow: 0 0 0 14px rgba(239, 68, 68, 0); }
-      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+
+    /* Smooth Progress Bar Transitions */
+    .metric-fill {
+      transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+<body class="bg-[#080c16] text-slate-200 min-h-screen flex flex-col font-sans selection:bg-emerald-500 selection:text-black relative overflow-x-hidden">
 
-  <!-- TOP HEADER -->
-  <header class="gradient-header text-white shadow-xl relative overflow-hidden">
-    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+  <!-- Background Orbs -->
+  <div class="ambient-orb-1"></div>
+  <div class="ambient-orb-2"></div>
+
+  <!-- NAVIGATION HEADER -->
+  <nav class="sticky top-0 z-40 border-b border-slate-800/80 bg-[#080c16]/80 backdrop-blur-xl">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 via-teal-500 to-indigo-600 flex items-center justify-center shadow-glow-emerald text-white font-devanagari text-xl font-bold">
+          वाक्
+        </div>
         <div>
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-200 text-xs font-semibold uppercase tracking-wider mb-2">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-            KIIT CS30033 — Speech & Video Processing
-          </div>
-          <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight">
-            संस्कृत उच्चारण मूल्याङ्कन
-            <span class="block text-lg sm:text-xl font-medium text-indigo-200 mt-1">
-              Sanskrit Pronunciation Assessment Engine (MFCC · DTW · LPC)
+          <div class="flex items-center gap-2">
+            <span class="font-display font-bold text-base tracking-tight text-white">Vāc-Bodha</span>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              v2.0 DSP
             </span>
-          </h1>
-          <p class="text-slate-300 text-sm mt-2 max-w-2xl">
-            Evaluate spoken Sanskrit articulation against authentic master recitations using 7-step MFCC extraction, 
-            Dynamic Time Warping with Cepstral Mean Normalization (CMN), and Linear Predictive Coding formant tracking.
+          </div>
+          <p class="text-[11px] text-slate-400 -mt-0.5 hidden sm:block">
+            Sanskrit Speech & Articulation Intelligence
           </p>
         </div>
-        <div class="flex items-center gap-3">
-          <a href="https://render.com" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-medium backdrop-blur transition">
-            <i data-lucide="cloud" class="w-4 h-4 text-cyan-300"></i>
-            Render Hosted
-          </a>
-          <a href="#about-theory" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white shadow transition">
-            <i data-lucide="book-open" class="w-4 h-4"></i>
-            DSP Theory
-          </a>
+      </div>
+
+      <!-- Header Badges & Actions -->
+      <div class="flex items-center gap-3">
+        <div class="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-xs text-slate-300">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="font-mono text-[11px] text-slate-400">16kHz · 26-Mel · p=16 LPC</span>
+        </div>
+
+        <a href="#samples-section" class="px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-semibold flex items-center gap-1.5 transition">
+          <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+          <span>Demo Samples</span>
+        </a>
+
+        <a href="https://github.com/Himanshu30-58/sanskrit-speech-assessment" target="_blank" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition">
+          <i data-lucide="github" class="w-3.5 h-3.5"></i>
+          <span>GitHub</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <section class="relative pt-10 pb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full cosmic-grid">
+    <div class="text-center max-w-3xl mx-auto space-y-4">
+      
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-emerald-500/10 via-cyan-500/10 to-indigo-500/10 border border-emerald-500/20 text-xs font-medium text-emerald-300">
+        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-emerald-400"></i>
+        <span>KIIT B.Tech CS30033 · Speech & Video Processing Capstone</span>
+      </div>
+
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight font-display text-white">
+        संस्कृत उच्चारण मूल्याङ्कन
+        <span class="block text-xl sm:text-2xl font-medium bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent mt-2">
+          Acoustic Assessment via 7-Step MFCC, DTW & LPC Resonances
+        </span>
+      </h1>
+
+      <p class="text-slate-400 text-sm sm:text-base leading-relaxed">
+        Evaluate spoken Sanskrit pronunciation with mathematical precision against authentic Vedic masters. 
+        Detect articulatory retroflex nuances, vocal tract formant envelopes, and temporal phonetic dynamics.
+      </p>
+
+    </div>
+  </section>
+
+  <!-- MASTER WORD BANNER & PHONETICS CARD -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mb-8">
+    <div class="relative overflow-hidden rounded-2xl border border-slate-800 bg-gradient-to-br from-slate-900/90 via-[#0e1628]/80 to-[#121c33]/90 p-6 sm:p-7 shadow-2xl backdrop-blur-xl">
+      <div class="absolute -right-10 -bottom-10 opacity-5 pointer-events-none font-devanagari text-[160px] text-amber-300 font-extrabold select-none">
+        कृष्ण
+      </div>
+
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+        
+        <!-- Left: Word Details & Articulation -->
+        <div class="space-y-3">
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider bg-amber-500/10 border border-amber-500/30 text-amber-300">
+              Golden Standard Reference
+            </span>
+            <span class="text-xs text-slate-400">Authentic Sanskrit Recitation</span>
+          </div>
+
+          <div class="flex flex-wrap items-baseline gap-3">
+            <span class="font-devanagari text-4xl sm:text-5xl font-extrabold text-white tracking-wide">
+              कृष्ण
+            </span>
+            <span class="font-display text-xl sm:text-2xl font-bold text-amber-300">
+              kṛṣṇā
+            </span>
+            <span class="font-mono text-sm px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
+              IPA: [kɽ.ʂɳaː]
+            </span>
+          </div>
+
+          <!-- Phonetic Articulation Tags -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+            <div class="p-2 rounded-lg bg-slate-950/50 border border-slate-800/80">
+              <span class="text-[10px] text-emerald-400 font-mono font-bold block">क् + ऋ (k + ṛ)</span>
+              <span class="text-[11px] text-slate-300">Mūrdhanya Vocalic</span>
+            </div>
+            <div class="p-2 rounded-lg bg-slate-950/50 border border-slate-800/80">
+              <span class="text-[10px] text-cyan-400 font-mono font-bold block">ष् (ṣ)</span>
+              <span class="text-[11px] text-slate-300">Retroflex Sibilant</span>
+            </div>
+            <div class="p-2 rounded-lg bg-slate-950/50 border border-slate-800/80">
+              <span class="text-[10px] text-amber-400 font-mono font-bold block">ण् (ṇ)</span>
+              <span class="text-[11px] text-slate-300">Retroflex Nasal</span>
+            </div>
+            <div class="p-2 rounded-lg bg-slate-950/50 border border-slate-800/80">
+              <span class="text-[10px] text-indigo-400 font-mono font-bold block">आ (ā)</span>
+              <span class="text-[11px] text-slate-300">Dīrgha Kantha Vowel</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Master Audio Player -->
+        <div class="w-full lg:w-80 shrink-0 bg-slate-950/80 border border-slate-800 rounded-xl p-4 flex flex-col gap-3">
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-semibold text-slate-300 flex items-center gap-1.5">
+              <i data-lucide="headphones" class="w-3.5 h-3.5 text-amber-400"></i>
+              Listen to Master
+            </span>
+            <span id="refDurationBadge" class="font-mono text-[11px] text-slate-400">1.28s</span>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <button id="masterPlayBtn" onclick="toggleAudioPlayback('masterAudio', 'masterPlayBtn', 'masterPlayIcon')" class="w-10 h-10 rounded-lg bg-gradient-to-tr from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 flex items-center justify-center shadow-lg transition active:scale-95 shrink-0">
+              <i id="masterPlayIcon" data-lucide="play" class="w-5 h-5 fill-current"></i>
+            </button>
+            <div class="flex-1 space-y-1">
+              <input type="range" id="masterSeek" value="0" min="0" max="100" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-400" oninput="seekAudio('masterAudio', this.value)">
+              <div class="flex justify-between text-[10px] font-mono text-slate-400">
+                <span id="masterCurrentTime">00:00</span>
+                <span id="masterTotalTime">--:--</span>
+              </div>
+            </div>
+          </div>
+
+          <audio id="masterAudio" preload="auto">
+            <source src="/api/reference-audio" type="audio/mpeg">
+          </audio>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- QUICK DEMO SAMPLES BAR (1-CLICK TEST) -->
+  <section id="samples-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mb-8">
+    <div class="p-5 rounded-2xl bg-slate-900/50 border border-slate-800/80 backdrop-blur-md">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+        <div class="flex items-center gap-2">
+          <span class="p-1.5 rounded-lg bg-amber-500/10 text-amber-400">
+            <i data-lucide="zap" class="w-4 h-4"></i>
+          </span>
+          <div>
+            <h3 class="text-sm font-bold text-white font-display">Instant Evaluation Samples</h3>
+            <p class="text-xs text-slate-400">Try testing immediately with pre-recorded speaker samples of varying accuracy</p>
+          </div>
+        </div>
+        <span class="text-[11px] font-mono text-slate-400">1-Click Automated Benchmark</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3" id="sampleCardsContainer">
+        <!-- Sample 1: Native -->
+        <div onclick="runSample('native')" class="group cursor-pointer p-3.5 rounded-xl bg-slate-950/60 hover:bg-slate-950 border border-slate-800 hover:border-emerald-500/50 transition-all duration-200 hover:shadow-glow-emerald">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-xs font-bold text-white group-hover:text-emerald-300 transition">1. Native Recitation</span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">~95% Score</span>
+          </div>
+          <p class="text-[11px] text-slate-400 line-clamp-2">Pristine Vedic chant articulation with exact retroflex formants and nasal release.</p>
+          <div class="mt-2.5 flex items-center justify-between text-[11px] font-semibold text-emerald-400 group-hover:translate-x-0.5 transition-transform">
+            <span>Run Benchmark</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </div>
+        </div>
+
+        <!-- Sample 2: Student -->
+        <div onclick="runSample('student')" class="group cursor-pointer p-3.5 rounded-xl bg-slate-950/60 hover:bg-slate-950 border border-slate-800 hover:border-blue-500/50 transition-all duration-200">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-xs font-bold text-white group-hover:text-blue-300 transition">2. Fluent Learner</span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20">~73% Score</span>
+          </div>
+          <p class="text-[11px] text-slate-400 line-clamp-2">Standard conversational pronunciation with slight timing and vowel elongation variations.</p>
+          <div class="mt-2.5 flex items-center justify-between text-[11px] font-semibold text-blue-400 group-hover:translate-x-0.5 transition-transform">
+            <span>Run Benchmark</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </div>
+        </div>
+
+        <!-- Sample 3: Mispronounced -->
+        <div onclick="runSample('mispronounced')" class="group cursor-pointer p-3.5 rounded-xl bg-slate-950/60 hover:bg-slate-950 border border-slate-800 hover:border-amber-500/50 transition-all duration-200">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-xs font-bold text-white group-hover:text-amber-300 transition">3. Mispronounced Articulation</span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">~55% Score</span>
+          </div>
+          <p class="text-[11px] text-slate-400 line-clamp-2">Said "kishna" missing vocalic retroflex 'ṛ' and altering sibilant turbulence.</p>
+          <div class="mt-2.5 flex items-center justify-between text-[11px] font-semibold text-amber-400 group-hover:translate-x-0.5 transition-transform">
+            <span>Run Benchmark</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </div>
         </div>
       </div>
     </div>
-  </header>
+  </section>
 
-  <!-- MAIN CONTAINER -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-8">
-
-    <!-- MASTER REFERENCE AUDIO BANNER -->
-    <section class="bg-gradient-to-r from-amber-500/10 via-indigo-500/10 to-purple-500/10 border border-amber-200 rounded-2xl p-5 shadow-sm">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div class="flex items-center gap-3">
-          <div class="w-12 h-12 rounded-xl bg-amber-500/20 text-amber-700 flex items-center justify-center shrink-0">
-            <i data-lucide="music" class="w-6 h-6"></i>
-          </div>
-          <div>
-            <div class="flex items-center gap-2">
-              <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-amber-100 text-amber-800 uppercase">Master Reference</span>
-              <h3 class="font-bold text-slate-900 text-base">कृष्ण (kṛṣṇā) — Authentic Sanskrit Recitation</h3>
-            </div>
-            <p class="text-xs text-slate-600 mt-0.5">Listen to the golden standard pronunciation before testing your speech.</p>
-          </div>
-        </div>
-        <div class="flex items-center gap-3 w-full md:w-auto">
-          <audio id="masterAudioPlayer" controls class="h-10 w-full md:w-72 rounded-lg shadow-inner">
-            <source src="/api/reference-audio" type="audio/mpeg">
-            Your browser does not support audio playback.
-          </audio>
-        </div>
-      </div>
-    </section>
-
-    <!-- INTERACTION PANEL (TABS) -->
-    <section class="glass-card rounded-2xl border border-slate-200 shadow-md p-6">
-      <!-- Tabs Navigation -->
-      <div class="flex border-b border-slate-200 gap-2 sm:gap-6 overflow-x-auto pb-px">
-        <button id="tabBtnMic" onclick="switchMode('mic')" class="flex items-center gap-2 pb-3 px-2 text-sm font-bold border-b-2 border-indigo-600 text-indigo-600 transition">
+  <!-- MAIN ASSESSMENT INTERACTIVE STUDIO -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex-1 space-y-8">
+    
+    <!-- INTERACTION WORKSTATION -->
+    <div class="rounded-2xl border border-slate-800 bg-slate-900/60 backdrop-blur-xl shadow-2xl p-6 sm:p-8">
+      
+      <!-- Studio Tabs Navigation -->
+      <div class="flex border-b border-slate-800/80 gap-3 sm:gap-6 overflow-x-auto pb-3">
+        <button id="tabBtnMic" onclick="switchStudioMode('mic')" class="flex items-center gap-2 pb-2 text-sm font-bold border-b-2 border-emerald-400 text-emerald-400 transition whitespace-nowrap">
           <i data-lucide="mic" class="w-4 h-4"></i>
-          1. Record Live Voice
+          <span>1. Live Studio Microphone</span>
         </button>
-        <button id="tabBtnFile" onclick="switchMode('file')" class="flex items-center gap-2 pb-3 px-2 text-sm font-semibold text-slate-500 hover:text-slate-800 border-b-2 border-transparent transition">
+        <button id="tabBtnFile" onclick="switchStudioMode('file')" class="flex items-center gap-2 pb-2 text-sm font-semibold text-slate-400 hover:text-slate-200 border-b-2 border-transparent transition whitespace-nowrap">
           <i data-lucide="upload-cloud" class="w-4 h-4"></i>
-          2. Upload Audio File
+          <span>2. Audio File Upload</span>
         </button>
-        <button id="tabBtnCompare" onclick="switchMode('compare')" class="flex items-center gap-2 pb-3 px-2 text-sm font-semibold text-slate-500 hover:text-slate-800 border-b-2 border-transparent transition">
-          <i data-lucide="split" class="w-4 h-4"></i>
-          3. Custom Pair Comparison
+        <button id="tabBtnCompare" onclick="switchStudioMode('compare')" class="flex items-center gap-2 pb-2 text-sm font-semibold text-slate-400 hover:text-slate-200 border-b-2 border-transparent transition whitespace-nowrap">
+          <i data-lucide="git-compare" class="w-4 h-4"></i>
+          <span>3. Dual Pair Comparison</span>
         </button>
       </div>
 
-      <!-- MODE 1: MIC RECORDING -->
-      <div id="modeMic" class="mt-6 space-y-6">
-        <div class="bg-indigo-50/50 border border-indigo-100 rounded-xl p-5 text-center max-w-xl mx-auto">
-          <p class="text-sm font-semibold text-slate-800">Target Word: <span class="devanagari text-xl font-bold text-indigo-700">कृष्ण (kṛṣṇā)</span></p>
-          <p class="text-xs text-slate-500 mt-1">Click the microphone button, pronounce the word clearly, and click Stop.</p>
-
-          <!-- Record Controls -->
-          <div class="my-6 flex flex-col items-center justify-center">
-            <button id="recordBtn" onclick="toggleRecording()" class="w-20 h-20 rounded-full bg-red-600 hover:bg-red-700 text-white flex items-center justify-center shadow-lg transition active:scale-95 focus:outline-none">
-              <i id="recordIcon" data-lucide="mic" class="w-8 h-8"></i>
+      <!-- MODE 1: LIVE STUDIO MIC -->
+      <div id="modeMic" class="mt-8 space-y-6">
+        <div class="max-w-xl mx-auto text-center space-y-4">
+          <p class="text-xs font-mono uppercase tracking-wider text-slate-400">
+            Target Articulation: <span class="font-devanagari text-lg text-emerald-400 font-bold ml-1">कृष्ण</span> (kṛṣṇā)
+          </p>
+          
+          <!-- Mic Record Button and Status -->
+          <div class="py-4 flex flex-col items-center justify-center">
+            <button id="recordBtn" onclick="toggleRecording()" class="relative group w-24 h-24 rounded-full bg-gradient-to-tr from-rose-600 to-red-500 hover:from-rose-500 hover:to-red-400 text-white flex items-center justify-center shadow-lg transition active:scale-95 focus:outline-none">
+              <i id="recordIcon" data-lucide="mic" class="w-10 h-10 group-hover:scale-110 transition-transform"></i>
             </button>
-            <div id="recordStatus" class="mt-3 text-xs font-semibold tracking-wide text-slate-500 uppercase">Ready to Record</div>
-            <div id="recordTimer" class="text-2xl font-mono font-bold text-slate-800 mt-1">00:00</div>
+            
+            <div id="recordStatus" class="mt-4 text-xs font-mono font-bold tracking-widest text-slate-400 uppercase">
+              Click to Start Recording
+            </div>
+            <div id="recordTimer" class="text-3xl font-mono font-bold text-white mt-1">
+              00:00.0
+            </div>
           </div>
 
-          <!-- VU Visualizer Canvas -->
-          <canvas id="vuVisualizer" class="w-full h-12 bg-slate-900 rounded-lg mb-4 hidden"></canvas>
+          <!-- Real-Time Spectrum / Oscilloscope Canvas -->
+          <div class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3">
+            <div class="flex items-center justify-between text-[11px] font-mono text-slate-500 mb-2">
+              <span class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                <span>Live Audio Spectrum / VU Meter</span>
+              </span>
+              <span id="canvasSampleRate">16,000 Hz</span>
+            </div>
+            <canvas id="liveVisualizer" class="w-full h-20 rounded-lg bg-[#050811]"></canvas>
+          </div>
 
-          <!-- Recorded Audio Preview -->
-          <div id="micPreviewContainer" class="hidden space-y-3 pt-3 border-t border-indigo-100">
-            <p class="text-xs font-medium text-slate-600">Your Recorded Audio:</p>
-            <audio id="micAudioPlayback" controls class="w-full h-10 rounded"></audio>
-            <button id="btnAnalyzeMic" onclick="submitAssessment('mic')" class="w-full py-3 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-md transition flex items-center justify-center gap-2">
+          <!-- Recorded Preview Section -->
+          <div id="micPreviewContainer" class="hidden pt-4 border-t border-slate-800 space-y-4 text-left">
+            <div class="flex items-center justify-between text-xs text-slate-300">
+              <span class="font-semibold flex items-center gap-1.5">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+                Recording Ready for Analysis
+              </span>
+              <span id="recordedDurationLabel" class="font-mono text-slate-400">--s</span>
+            </div>
+
+            <!-- Custom Player for Recorded Speech -->
+            <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center gap-3">
+              <button onclick="toggleAudioPlayback('micAudioPlayback', 'micPlayBtn', 'micPlayIcon')" id="micPlayBtn" class="w-9 h-9 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 flex items-center justify-center shrink-0">
+                <i id="micPlayIcon" data-lucide="play" class="w-4 h-4 fill-current"></i>
+              </button>
+              <div class="flex-1 space-y-1">
+                <input type="range" id="micSeek" value="0" min="0" max="100" class="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-400" oninput="seekAudio('micAudioPlayback', this.value)">
+                <div class="flex justify-between text-[10px] font-mono text-slate-500">
+                  <span id="micCurrentTime">00:00</span>
+                  <span id="micTotalTime">--:--</span>
+                </div>
+              </div>
+              <audio id="micAudioPlayback" preload="auto"></audio>
+            </div>
+
+            <button onclick="submitAssessment('mic')" class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-display font-bold text-sm shadow-glow-emerald transition flex items-center justify-center gap-2">
               <i data-lucide="sparkles" class="w-4 h-4"></i>
-              Analyze Pronunciation Now
+              <span>Evaluate Sanskrit Articulation</span>
             </button>
           </div>
+
         </div>
       </div>
 
-      <!-- MODE 2: FILE UPLOAD -->
-      <div id="modeFile" class="mt-6 space-y-6 hidden">
-        <div class="max-w-xl mx-auto">
-          <label for="studentAudioInput" class="block border-2 border-dashed border-indigo-200 hover:border-indigo-500 rounded-2xl p-8 text-center cursor-pointer transition bg-indigo-50/20 group">
-            <i data-lucide="upload" class="w-10 h-10 text-indigo-500 mx-auto mb-3 group-hover:scale-110 transition-transform"></i>
-            <span class="block text-sm font-semibold text-slate-800">Click to choose or drag & drop student audio</span>
-            <span class="block text-xs text-slate-500 mt-1">Supports WAV, MP3, M4A, OGG, FLAC (Max 25MB)</span>
+      <!-- MODE 2: AUDIO FILE UPLOAD -->
+      <div id="modeFile" class="mt-8 space-y-6 hidden">
+        <div class="max-w-xl mx-auto space-y-4">
+          <label for="studentAudioInput" class="block border-2 border-dashed border-slate-700 hover:border-emerald-500 rounded-2xl p-8 text-center cursor-pointer transition bg-slate-950/40 group">
+            <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
+              <i data-lucide="upload-cloud" class="w-7 h-7"></i>
+            </div>
+            <span class="block text-sm font-semibold text-white">Choose or Drag & Drop Audio File</span>
+            <span class="block text-xs text-slate-400 mt-1 font-mono">WAV · MP3 · M4A · OGG · FLAC (Resampled to 16 kHz)</span>
             <input type="file" id="studentAudioInput" accept="audio/*" class="hidden" onchange="handleStudentFileSelected(event)">
           </label>
 
-          <div id="filePreviewContainer" class="mt-4 hidden space-y-3 p-4 bg-slate-100 rounded-xl">
-            <div class="flex items-center justify-between text-xs font-medium text-slate-700">
-              <span id="fileNameDisplay" class="truncate font-semibold max-w-[280px]">audio.wav</span>
-              <span id="fileSizeDisplay">1.2 MB</span>
+          <div id="filePreviewContainer" class="hidden p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-3">
+            <div class="flex items-center justify-between text-xs font-mono">
+              <span id="fileNameDisplay" class="truncate font-semibold text-slate-200 max-w-[280px]">audio.wav</span>
+              <span id="fileSizeDisplay" class="text-slate-400">1.2 MB</span>
             </div>
-            <audio id="fileAudioPlayback" controls class="w-full h-10 rounded"></audio>
-            <button id="btnAnalyzeFile" onclick="submitAssessment('file')" class="w-full py-3 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-md transition flex items-center justify-center gap-2">
+
+            <div class="flex items-center gap-3">
+              <button onclick="toggleAudioPlayback('fileAudioPlayback', 'filePlayBtn', 'filePlayIcon')" id="filePlayBtn" class="w-9 h-9 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 flex items-center justify-center shrink-0">
+                <i id="filePlayIcon" data-lucide="play" class="w-4 h-4 fill-current"></i>
+              </button>
+              <div class="flex-1 space-y-1">
+                <input type="range" id="fileSeek" value="0" min="0" max="100" class="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-400" oninput="seekAudio('fileAudioPlayback', this.value)">
+                <div class="flex justify-between text-[10px] font-mono text-slate-500">
+                  <span id="fileCurrentTime">00:00</span>
+                  <span id="fileTotalTime">--:--</span>
+                </div>
+              </div>
+              <audio id="fileAudioPlayback" preload="auto"></audio>
+            </div>
+
+            <button onclick="submitAssessment('file')" class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-display font-bold text-sm shadow-glow-emerald transition flex items-center justify-center gap-2">
               <i data-lucide="sparkles" class="w-4 h-4"></i>
-              Analyze Uploaded Audio
+              <span>Evaluate Uploaded Audio</span>
             </button>
           </div>
         </div>
       </div>
 
-      <!-- MODE 3: CUSTOM COMPARISON -->
-      <div id="modeCompare" class="mt-6 space-y-6 hidden">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-          <!-- Custom Reference -->
-          <div class="p-5 bg-amber-50/50 border border-amber-200 rounded-xl space-y-3">
-            <div class="flex items-center gap-2 text-amber-800 font-bold text-sm">
+      <!-- MODE 3: DUAL PAIR COMPARISON -->
+      <div id="modeCompare" class="mt-8 space-y-6 hidden">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-3xl mx-auto">
+          
+          <!-- Teacher Reference -->
+          <div class="p-5 bg-slate-950/70 border border-amber-500/30 rounded-2xl space-y-3">
+            <div class="flex items-center gap-2 text-amber-300 font-bold text-xs uppercase tracking-wider font-mono">
               <i data-lucide="award" class="w-4 h-4"></i>
-              Reference Audio (Teacher / Guru)
+              <span>Teacher / Guru Reference</span>
             </div>
-            <label for="customRefInput" class="block border-2 border-dashed border-amber-300 hover:border-amber-500 rounded-xl p-4 text-center cursor-pointer transition bg-white/70">
-              <i data-lucide="upload" class="w-6 h-6 text-amber-600 mx-auto mb-1"></i>
-              <span class="text-xs font-semibold text-slate-700 block">Select Reference Audio</span>
+            <label for="customRefInput" class="block border-2 border-dashed border-amber-500/30 hover:border-amber-400 rounded-xl p-4 text-center cursor-pointer transition bg-slate-900/50">
+              <i data-lucide="upload" class="w-6 h-6 text-amber-400 mx-auto mb-1"></i>
+              <span class="text-xs font-semibold text-slate-200 block">Select Custom Reference</span>
               <input type="file" id="customRefInput" accept="audio/*" class="hidden" onchange="handleCustomRefSelected(event)">
             </label>
             <div id="customRefPreview" class="hidden space-y-2">
-              <span id="customRefName" class="text-xs font-medium text-slate-700 truncate block"></span>
-              <audio id="customRefPlayer" controls class="w-full h-9 rounded"></audio>
+              <span id="customRefName" class="text-xs font-mono text-slate-300 truncate block"></span>
+              <audio id="customRefPlayer" controls class="w-full h-8 rounded opacity-80"></audio>
             </div>
           </div>
 
-          <!-- Custom Test -->
-          <div class="p-5 bg-indigo-50/50 border border-indigo-200 rounded-xl space-y-3">
-            <div class="flex items-center gap-2 text-indigo-800 font-bold text-sm">
+          <!-- Student Learner -->
+          <div class="p-5 bg-slate-950/70 border border-cyan-500/30 rounded-2xl space-y-3">
+            <div class="flex items-center gap-2 text-cyan-300 font-bold text-xs uppercase tracking-wider font-mono">
               <i data-lucide="user" class="w-4 h-4"></i>
-              Learner Audio (Student)
+              <span>Student / Learner Audio</span>
             </div>
-            <label for="customTestInput" class="block border-2 border-dashed border-indigo-300 hover:border-indigo-500 rounded-xl p-4 text-center cursor-pointer transition bg-white/70">
-              <i data-lucide="upload" class="w-6 h-6 text-indigo-600 mx-auto mb-1"></i>
-              <span class="text-xs font-semibold text-slate-700 block">Select Student Audio</span>
+            <label for="customTestInput" class="block border-2 border-dashed border-cyan-500/30 hover:border-cyan-400 rounded-xl p-4 text-center cursor-pointer transition bg-slate-900/50">
+              <i data-lucide="upload" class="w-6 h-6 text-cyan-400 mx-auto mb-1"></i>
+              <span class="text-xs font-semibold text-slate-200 block">Select Student Audio</span>
               <input type="file" id="customTestInput" accept="audio/*" class="hidden" onchange="handleCustomTestSelected(event)">
             </label>
             <div id="customTestPreview" class="hidden space-y-2">
-              <span id="customTestName" class="text-xs font-medium text-slate-700 truncate block"></span>
-              <audio id="customTestPlayer" controls class="w-full h-9 rounded"></audio>
+              <span id="customTestName" class="text-xs font-mono text-slate-300 truncate block"></span>
+              <audio id="customTestPlayer" controls class="w-full h-8 rounded opacity-80"></audio>
             </div>
           </div>
+
         </div>
 
         <div class="max-w-md mx-auto">
-          <button id="btnAnalyzeCompare" onclick="submitAssessment('compare')" class="w-full py-3 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-md transition flex items-center justify-center gap-2">
+          <button onclick="submitAssessment('compare')" class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-display font-bold text-sm shadow-glow-cyan transition flex items-center justify-center gap-2">
             <i data-lucide="git-compare" class="w-4 h-4"></i>
-            Run Acoustic Comparison
+            <span>Execute Comparative Assessment</span>
           </button>
         </div>
       </div>
-    </section>
 
-    <!-- LOADING SPINNER -->
-    <div id="loadingSection" class="hidden glass-card rounded-2xl border border-indigo-100 p-8 text-center shadow-lg max-w-lg mx-auto">
-      <div class="inline-block animate-spin text-indigo-600 mb-4">
-        <i data-lucide="loader-2" class="w-10 h-10"></i>
-      </div>
-      <h3 class="text-base font-bold text-slate-900">Computing Acoustic & Perceptual Features...</h3>
-      <p id="loadingStatusText" class="text-xs text-slate-500 mt-1">Executing 7-step MFCC pipeline · DTW sequence alignment · LPC formants</p>
     </div>
 
-    <!-- ERROR ALERT -->
-    <div id="errorAlert" class="hidden max-w-xl mx-auto p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-sm flex items-start gap-3">
-      <i data-lucide="alert-circle" class="w-5 h-5 shrink-0 text-red-600 mt-0.5"></i>
+    <!-- PROCESSING LOADING STATE -->
+    <div id="loadingSection" class="hidden rounded-2xl border border-slate-800 bg-slate-900/80 p-10 text-center shadow-2xl max-w-xl mx-auto backdrop-blur-xl">
+      <div class="relative w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+        <div class="absolute inset-0 rounded-full border-4 border-emerald-500/20 animate-ping"></div>
+        <div class="w-16 h-16 rounded-full border-4 border-emerald-500 border-t-transparent animate-spin"></div>
+        <i data-lucide="cpu" class="w-6 h-6 text-emerald-400 absolute"></i>
+      </div>
+      <h3 class="text-lg font-bold text-white font-display">Acoustic Signal Processing in Progress</h3>
+      <p id="loadingStatusText" class="text-xs font-mono text-slate-400 mt-2">
+        Computing 7-Step MFCC · Dynamic Time Warping · Levinson-Durbin LPC Formants
+      </p>
+    </div>
+
+    <!-- ERROR NOTIFICATION -->
+    <div id="errorAlert" class="hidden max-w-xl mx-auto p-4 rounded-xl bg-rose-950/60 border border-rose-500/40 text-rose-200 text-sm flex items-start gap-3 backdrop-blur-md">
+      <i data-lucide="alert-octagon" class="w-5 h-5 shrink-0 text-rose-400 mt-0.5"></i>
       <div>
-        <h4 class="font-bold text-red-900">Assessment Error</h4>
-        <p id="errorMessage" class="text-xs text-red-700 mt-0.5"></p>
+        <h4 class="font-bold text-rose-300">Assessment Error</h4>
+        <p id="errorMessage" class="text-xs text-rose-200 mt-0.5"></p>
       </div>
     </div>
 
-    <!-- RESULTS SECTION -->
+    <!-- RESULTS DASHBOARD -->
     <section id="resultsSection" class="hidden space-y-8">
-      <!-- Top Score Dashboard -->
-      <div class="glass-card rounded-2xl border border-slate-200 shadow-xl p-6 sm:p-8">
+      
+      <!-- Top Score Header Card -->
+      <div class="rounded-2xl border border-slate-800 bg-gradient-to-br from-slate-900 via-[#0e1628] to-[#121c33] p-6 sm:p-8 shadow-2xl">
         <div class="flex flex-col lg:flex-row items-center justify-between gap-8">
           
-          <!-- Big Score Gauge -->
+          <!-- Circular Animated Gauge -->
           <div class="flex items-center gap-6">
-            <div class="relative w-36 h-36 flex items-center justify-center">
+            <div class="relative w-40 h-40 flex items-center justify-center">
               <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                <circle cx="50" cy="50" r="42" stroke="currentColor" stroke-width="8" class="text-slate-100" fill="transparent"/>
-                <circle id="scoreCircle" cx="50" cy="50" r="42" stroke="currentColor" stroke-width="8" class="text-indigo-600 transition-all duration-1000 ease-out" fill="transparent" stroke-dasharray="264" stroke-dashoffset="264" stroke-linecap="round"/>
+                <circle cx="50" cy="50" r="42" stroke="currentColor" stroke-width="8" class="text-slate-800" fill="transparent"/>
+                <circle id="scoreCircle" cx="50" cy="50" r="42" stroke="currentColor" stroke-width="8" class="text-emerald-400 transition-all duration-1000 ease-out" fill="transparent" stroke-dasharray="264" stroke-dashoffset="264" stroke-linecap="round"/>
               </svg>
               <div class="absolute flex flex-col items-center justify-center text-center">
-                <span id="scoreNumber" class="text-3xl font-extrabold text-slate-900">0.0%</span>
-                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Overall</span>
+                <span id="scoreNumber" class="text-4xl font-extrabold font-display text-white">0.0%</span>
+                <span class="text-[10px] font-mono uppercase tracking-widest text-slate-400 mt-0.5">Overall</span>
               </div>
             </div>
 
-            <div>
-              <div id="scoreBadge" class="inline-block px-3 py-1 rounded-full text-xs font-extrabold tracking-wide uppercase bg-emerald-100 text-emerald-800 mb-2">
-                EXCELLENT
+            <div class="space-y-1.5">
+              <div id="scoreBadge" class="inline-block px-3 py-1 rounded-full text-xs font-mono font-bold tracking-wider uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                EXCELLENT (उत्कृष्ट)
               </div>
-              <h2 class="text-2xl font-bold text-slate-900">Pronunciation Match</h2>
-              <p id="scoreDescription" class="text-xs text-slate-500 mt-1 max-w-sm">
-                Authentic phonetic alignment and acoustic spectral envelope matched with reference.
+              <h2 class="text-2xl font-bold font-display text-white">Pronunciation Match</h2>
+              <p id="scoreDescription" class="text-xs text-slate-300 max-w-sm leading-relaxed">
+                Phonetic formant trajectories align closely with the native Sanskrit master.
               </p>
             </div>
           </div>
 
-          <!-- Metadata Quick Badges -->
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full lg:w-auto text-xs">
-            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
-              <span class="text-slate-400 block text-[10px] uppercase font-semibold">DTW Cost</span>
-              <span id="metaDtw" class="font-bold text-slate-800 text-sm">0.00</span>
+          <!-- DSP Telemetry Chips -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 w-full lg:w-auto text-xs font-mono">
+            <div class="p-3 bg-slate-950/70 rounded-xl border border-slate-800">
+              <span class="text-slate-500 block text-[10px] uppercase">DTW Cost</span>
+              <span id="metaDtw" class="font-bold text-emerald-400 text-sm">0.000</span>
             </div>
-            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
-              <span class="text-slate-400 block text-[10px] uppercase font-semibold">Learner Frames</span>
-              <span id="metaFrames" class="font-bold text-slate-800 text-sm">0</span>
+            <div class="p-3 bg-slate-950/70 rounded-xl border border-slate-800">
+              <span class="text-slate-500 block text-[10px] uppercase">Learner Frames</span>
+              <span id="metaFrames" class="font-bold text-cyan-400 text-sm">0</span>
             </div>
-            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
-              <span class="text-slate-400 block text-[10px] uppercase font-semibold">Learner Duration</span>
-              <span id="metaDuration" class="font-bold text-slate-800 text-sm">0.00s</span>
+            <div class="p-3 bg-slate-950/70 rounded-xl border border-slate-800">
+              <span class="text-slate-500 block text-[10px] uppercase">Duration</span>
+              <span id="metaDuration" class="font-bold text-amber-400 text-sm">0.00s</span>
             </div>
-            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
-              <span class="text-slate-400 block text-[10px] uppercase font-semibold">Sampling Rate</span>
-              <span class="font-bold text-slate-800 text-sm">16,000 Hz</span>
+            <div class="p-3 bg-slate-950/70 rounded-xl border border-slate-800">
+              <span class="text-slate-500 block text-[10px] uppercase">Sample Rate</span>
+              <span class="font-bold text-slate-200 text-sm">16,000 Hz</span>
             </div>
-            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
-              <span class="text-slate-400 block text-[10px] uppercase font-semibold">LPC Order (p)</span>
-              <span class="font-bold text-slate-800 text-sm">16 Formants</span>
+            <div class="p-3 bg-slate-950/70 rounded-xl border border-slate-800">
+              <span class="text-slate-500 block text-[10px] uppercase">LPC Order (p)</span>
+              <span class="font-bold text-slate-200 text-sm">16 Poles</span>
             </div>
-            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
-              <span class="text-slate-400 block text-[10px] uppercase font-semibold">Channels</span>
-              <span class="font-bold text-slate-800 text-sm">26 Mel / 13 MFCC</span>
+            <div class="p-3 bg-slate-950/70 rounded-xl border border-slate-800">
+              <span class="text-slate-500 block text-[10px] uppercase">Filterbank</span>
+              <span class="font-bold text-slate-200 text-sm">26 Mel Filters</span>
             </div>
           </div>
 
         </div>
 
-        <!-- 5-Point Metric Breakdown Cards -->
-        <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+        <!-- 5-Point Acoustic Metric Breakdown Cards -->
+        <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
+          
           <!-- MFCC -->
-          <div class="p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
-            <div class="text-[11px] font-bold text-slate-500 uppercase">1. MFCC Similarity</div>
-            <div class="text-xl font-extrabold text-indigo-600 mt-1" id="mMFCC">0.0%</div>
-            <div class="w-full bg-slate-100 rounded-full h-1.5 mt-2">
-              <div id="barMFCC" class="bg-indigo-600 h-1.5 rounded-full" style="width: 0%"></div>
+          <div class="p-4 bg-slate-950/80 rounded-xl border border-slate-800">
+            <div class="flex items-center justify-between text-[11px] font-mono text-slate-400">
+              <span>1. MFCC Similarity</span>
+              <span class="text-emerald-400 font-bold">35% wt</span>
             </div>
-            <p class="text-[10px] text-slate-400 mt-1">Phonetic articulation</p>
+            <div class="text-2xl font-extrabold font-display text-white mt-1" id="mMFCC">0.0%</div>
+            <div class="w-full bg-slate-800 rounded-full h-1.5 mt-2 overflow-hidden">
+              <div id="barMFCC" class="bg-emerald-400 h-1.5 rounded-full metric-fill" style="width: 0%"></div>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-1.5">DTW phonetic alignment</p>
           </div>
 
-          <!-- Spectral -->
-          <div class="p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
-            <div class="text-[11px] font-bold text-slate-500 uppercase">2. Spectral Envelope</div>
-            <div class="text-xl font-extrabold text-blue-600 mt-1" id="mSpectral">0.0%</div>
-            <div class="w-full bg-slate-100 rounded-full h-1.5 mt-2">
-              <div id="barSpectral" class="bg-blue-600 h-1.5 rounded-full" style="width: 0%"></div>
+          <!-- Spectral Envelope -->
+          <div class="p-4 bg-slate-950/80 rounded-xl border border-slate-800">
+            <div class="flex items-center justify-between text-[11px] font-mono text-slate-400">
+              <span>2. Spectral Envelope</span>
+              <span class="text-cyan-400 font-bold">20% wt</span>
             </div>
-            <p class="text-[10px] text-slate-400 mt-1">Vocal tract correlation</p>
+            <div class="text-2xl font-extrabold font-display text-white mt-1" id="mSpectral">0.0%</div>
+            <div class="w-full bg-slate-800 rounded-full h-1.5 mt-2 overflow-hidden">
+              <div id="barSpectral" class="bg-cyan-400 h-1.5 rounded-full metric-fill" style="width: 0%"></div>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-1.5">Log-power correlation</p>
           </div>
 
-          <!-- Duration -->
-          <div class="p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
-            <div class="text-[11px] font-bold text-slate-500 uppercase">3. Duration Match</div>
-            <div class="text-xl font-extrabold text-emerald-600 mt-1" id="mDuration">0.0%</div>
-            <div class="w-full bg-slate-100 rounded-full h-1.5 mt-2">
-              <div id="barDuration" class="bg-emerald-600 h-1.5 rounded-full" style="width: 0%"></div>
+          <!-- Duration Match -->
+          <div class="p-4 bg-slate-950/80 rounded-xl border border-slate-800">
+            <div class="flex items-center justify-between text-[11px] font-mono text-slate-400">
+              <span>3. Duration Match</span>
+              <span class="text-amber-400 font-bold">15% wt</span>
             </div>
-            <p class="text-[10px] text-slate-400 mt-1">Tempo / syllable rhythm</p>
+            <div class="text-2xl font-extrabold font-display text-white mt-1" id="mDuration">0.0%</div>
+            <div class="w-full bg-slate-800 rounded-full h-1.5 mt-2 overflow-hidden">
+              <div id="barDuration" class="bg-amber-400 h-1.5 rounded-full metric-fill" style="width: 0%"></div>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-1.5">Syllable rhythm & mora</p>
           </div>
 
           <!-- Mel Energy -->
-          <div class="p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
-            <div class="text-[11px] font-bold text-slate-500 uppercase">4. Mel Energy</div>
-            <div class="text-xl font-extrabold text-amber-600 mt-1" id="mMel">0.0%</div>
-            <div class="w-full bg-slate-100 rounded-full h-1.5 mt-2">
-              <div id="barMel" class="bg-amber-600 h-1.5 rounded-full" style="width: 0%"></div>
+          <div class="p-4 bg-slate-950/80 rounded-xl border border-slate-800">
+            <div class="flex items-center justify-between text-[11px] font-mono text-slate-400">
+              <span>4. Mel Energy</span>
+              <span class="text-indigo-400 font-bold">20% wt</span>
             </div>
-            <p class="text-[10px] text-slate-400 mt-1">Perceptual loudness</p>
+            <div class="text-2xl font-extrabold font-display text-white mt-1" id="mMel">0.0%</div>
+            <div class="w-full bg-slate-800 rounded-full h-1.5 mt-2 overflow-hidden">
+              <div id="barMel" class="bg-indigo-400 h-1.5 rounded-full metric-fill" style="width: 0%"></div>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-1.5">Auditory filter profile</p>
           </div>
 
           <!-- Temporal Dynamics -->
-          <div class="p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
-            <div class="text-[11px] font-bold text-slate-500 uppercase">5. Dynamics (Delta)</div>
-            <div class="text-xl font-extrabold text-purple-600 mt-1" id="mDynamics">0.0%</div>
-            <div class="w-full bg-slate-100 rounded-full h-1.5 mt-2">
-              <div id="barDynamics" class="bg-purple-600 h-1.5 rounded-full" style="width: 0%"></div>
+          <div class="p-4 bg-slate-950/80 rounded-xl border border-slate-800">
+            <div class="flex items-center justify-between text-[11px] font-mono text-slate-400">
+              <span>5. Dynamics (Delta)</span>
+              <span class="text-rose-400 font-bold">10% wt</span>
             </div>
-            <p class="text-[10px] text-slate-400 mt-1">Phonetic transitions</p>
+            <div class="text-2xl font-extrabold font-display text-white mt-1" id="mDynamics">0.0%</div>
+            <div class="w-full bg-slate-800 rounded-full h-1.5 mt-2 overflow-hidden">
+              <div id="barDynamics" class="bg-rose-400 h-1.5 rounded-full metric-fill" style="width: 0%"></div>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-1.5">Δ velocity transitions</p>
           </div>
+
         </div>
+
       </div>
 
-      <!-- VISUAL COMPARISON PLOTS TABS -->
-      <div class="glass-card rounded-2xl border border-slate-200 shadow-xl p-6 sm:p-8">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+      <!-- VISUALIZATION SUITE (SPECTRAL PLOTS) -->
+      <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 sm:p-8 shadow-2xl backdrop-blur-xl">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-800 pb-4">
           <div>
-            <h3 class="text-lg font-bold text-slate-900">Acoustic Signal Visualizations</h3>
-            <p class="text-xs text-slate-500">Inspect time, frequency, cepstral and alignment plots generated by DSP algorithms.</p>
+            <h3 class="text-lg font-bold font-display text-white flex items-center gap-2">
+              <i data-lucide="activity" class="w-5 h-5 text-emerald-400"></i>
+              Acoustic Signal Visualizations
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5">Time, frequency, cepstral and alignment plots generated by DSP algorithms.</p>
           </div>
-          <!-- Plot Tabs -->
-          <div class="flex flex-wrap gap-1.5 bg-slate-100 p-1.5 rounded-xl">
-            <button onclick="showPlot('report')" id="plotTab_report" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-white shadow-sm text-slate-900 transition">📊 Summary Report</button>
-            <button onclick="showPlot('waveform')" id="plotTab_waveform" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition">📈 Waveforms</button>
-            <button onclick="showPlot('spectrogram')" id="plotTab_spectrogram" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition">🌈 Spectrograms</button>
-            <button onclick="showPlot('mfcc')" id="plotTab_mfcc" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition">🔥 MFCC Heatmap</button>
-            <button onclick="showPlot('dtw')" id="plotTab_dtw" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition">⚡ DTW Matrix</button>
-            <button onclick="showPlot('lpc')" id="plotTab_lpc" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition">🎯 LPC Formants</button>
+
+          <!-- Plot Tab Selector -->
+          <div class="flex flex-wrap gap-1.5 bg-slate-950 p-1.5 rounded-xl border border-slate-800">
+            <button onclick="showPlot('report')" id="plotTab_report" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-500 text-slate-950 font-bold transition">📊 Report</button>
+            <button onclick="showPlot('waveform')" id="plotTab_waveform" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition">📈 Waveforms</button>
+            <button onclick="showPlot('spectrogram')" id="plotTab_spectrogram" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition">🌈 Spectrograms</button>
+            <button onclick="showPlot('mfcc')" id="plotTab_mfcc" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition">🔥 MFCC Heatmap</button>
+            <button onclick="showPlot('dtw')" id="plotTab_dtw" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition">⚡ DTW Path</button>
+            <button onclick="showPlot('lpc')" id="plotTab_lpc" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition">🎯 LPC Formants</button>
           </div>
         </div>
 
-        <!-- Plot Display Container -->
+        <!-- Plot Display Screen -->
         <div class="mt-6 flex flex-col items-center">
-          <div class="relative w-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-inner p-2 flex items-center justify-center min-h-[380px]">
+          <div class="relative w-full overflow-hidden rounded-2xl border border-slate-800 bg-[#050811] p-3 flex items-center justify-center min-h-[380px]">
             <img id="activePlotImg" src="" alt="Acoustic Plot" class="max-w-full h-auto rounded-lg cursor-zoom-in transition hover:opacity-95" onclick="openModal()">
+            <button onclick="downloadCurrentPlot()" class="absolute top-4 right-4 px-3 py-1.5 rounded-lg bg-slate-900/80 hover:bg-slate-900 border border-slate-700 text-xs font-mono text-slate-300 flex items-center gap-1.5 backdrop-blur transition">
+              <i data-lucide="download" class="w-3.5 h-3.5"></i>
+              <span>Save PNG</span>
+            </button>
           </div>
-          <span class="text-[11px] text-slate-400 mt-2 flex items-center gap-1">
-            <i data-lucide="zoom-in" class="w-3.5 h-3.5"></i> Click image to open high-resolution fullscreen view
-          </span>
+          
+          <div id="plotTheoryExplanation" class="w-full mt-4 p-4 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-300 font-mono">
+            <!-- Dynamic explanation updated by JS -->
+          </div>
         </div>
       </div>
+
+      <!-- ACTIONS & EXPORT BAR -->
+      <div class="flex flex-wrap items-center justify-between gap-4 p-5 rounded-2xl bg-slate-900/40 border border-slate-800">
+        <div class="flex items-center gap-2 text-xs font-mono text-slate-400">
+          <i data-lucide="file-check" class="w-4 h-4 text-emerald-400"></i>
+          <span>Assessment completed successfully. Ready for export.</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <button onclick="exportJsonReport()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-white flex items-center gap-2 transition">
+            <i data-lucide="file-code" class="w-4 h-4 text-cyan-400"></i>
+            <span>Export JSON</span>
+          </button>
+          <button onclick="window.print()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-white flex items-center gap-2 transition">
+            <i data-lucide="printer" class="w-4 h-4 text-amber-400"></i>
+            <span>Print Report</span>
+          </button>
+          <button onclick="resetStudio()" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 transition">
+            <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+            <span>New Test</span>
+          </button>
+        </div>
+      </div>
+
     </section>
 
-    <!-- DSP THEORY & SYLLABUS REFERENCE -->
-    <section id="about-theory" class="glass-card rounded-2xl border border-slate-200 shadow-md p-6 sm:p-8">
-      <div class="flex items-center gap-2 mb-4">
-        <span class="p-2 rounded-lg bg-indigo-100 text-indigo-700">
-          <i data-lucide="cpu" class="w-5 h-5"></i>
+    <!-- SCIENTIFIC & SYLLABUS REFERENCE ACCORDION -->
+    <section class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6 sm:p-8 backdrop-blur-xl mb-12">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="p-2 rounded-lg bg-indigo-500/10 text-indigo-400">
+          <i data-lucide="book-marked" class="w-5 h-5"></i>
         </span>
-        <h3 class="text-lg font-bold text-slate-900">CS30033 Syllabus & Engineering Architecture</h3>
+        <div>
+          <h3 class="text-base font-bold font-display text-white">Syllabus & DSP Theoretical Foundations</h3>
+          <p class="text-xs text-slate-400">How CS30033 signal processing concepts power the assessment engine</p>
+        </div>
       </div>
-      
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-slate-600">
-        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-          <h4 class="font-bold text-indigo-900 text-sm">1. 7-Step MFCC Extraction</h4>
-          <p>Speech is sampled at 16 kHz, pre-emphasized (\(\alpha = 0.97\)), framed with 25ms Hamming windows (10ms hop), transformed via 512-pt FFT to power spectrum, mapped to 26 Mel triangular filters, logged, and decorrelated via DCT-II yielding 13 static MFCCs.</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 text-xs text-slate-300">
+        
+        <div class="p-4 rounded-xl bg-slate-950/70 border border-slate-800/80 space-y-2">
+          <span class="font-mono text-emerald-400 font-bold block text-sm">1. 7-Step MFCC Extraction</span>
+          <p class="text-slate-400 leading-relaxed">
+            Pre-emphasis (<span class="font-mono text-slate-200">α=0.97</span>) boosts high frequencies. 
+            Framed with 25ms Hamming windows (10ms hop), transformed via 512-pt FFT, mapped to 26 Mel-spaced triangular filters, logged, and decorrelated via DCT-II yielding 13 static MFCCs.
+          </p>
         </div>
-        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-          <h4 class="font-bold text-indigo-900 text-sm">2. CMN & DTW Sequence Alignment</h4>
-          <p>Cepstral Mean Normalization removes channel bias and microphone gain variation. Dynamic Time Warping (DTW) aligns time-stretched phonetic sequences via dynamic programming, computing the minimum Euclidean path distance.</p>
+
+        <div class="p-4 rounded-xl bg-slate-950/70 border border-slate-800/80 space-y-2">
+          <span class="font-mono text-cyan-400 font-bold block text-sm">2. CMN & DTW Alignment</span>
+          <p class="text-slate-400 leading-relaxed">
+            Cepstral Mean Normalization removes linear channel bias. 
+            Dynamic Time Warping aligns variable-speed utterances via dynamic programming, measuring minimal Euclidean trajectory distance.
+          </p>
         </div>
-        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-          <h4 class="font-bold text-indigo-900 text-sm">3. LPC Formant Tracking</h4>
-          <p>All-pole model (\(p = 16\)) solved via Levinson-Durbin recursion. Deconvolves vocal tract resonance poles (formants \(F_1, F_2, F_3\)) from the glottal excitation pulse to inspect correct Sanskrit vowel articulation.</p>
+
+        <div class="p-4 rounded-xl bg-slate-950/70 border border-slate-800/80 space-y-2">
+          <span class="font-mono text-amber-400 font-bold block text-sm">3. LPC Formant Tracking</span>
+          <p class="text-slate-400 leading-relaxed">
+            An all-pole vocal tract filter (<span class="font-mono text-slate-200">p=16</span>) solved via Levinson-Durbin recursion 
+            reveals resonance poles (<span class="font-mono text-slate-200">F₁, F₂, F₃</span>) critical for Sanskrit retroflex consonants (<span class="font-devanagari text-slate-200">ष, ण</span>).
+          </p>
         </div>
+
       </div>
     </section>
 
   </main>
 
-  <!-- IMAGE FULLSCREEN MODAL -->
-  <div id="imageModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4" onclick="closeModal()">
-    <div class="relative max-w-5xl max-h-[90vh] bg-white rounded-2xl p-2 shadow-2xl overflow-auto" onclick="event.stopPropagation()">
-      <button onclick="closeModal()" class="absolute top-4 right-4 z-10 p-2 bg-slate-900/70 hover:bg-slate-900 text-white rounded-full transition">
+  <!-- FULLSCREEN IMAGE LIGHTBOX MODAL -->
+  <div id="imageModal" class="fixed inset-0 z-50 bg-[#050811]/90 backdrop-blur-md hidden items-center justify-center p-4" onclick="closeModal()">
+    <div class="relative max-w-6xl max-h-[92vh] bg-slate-900 border border-slate-700 rounded-2xl p-3 shadow-2xl overflow-auto" onclick="event.stopPropagation()">
+      <button onclick="closeModal()" class="absolute top-4 right-4 z-10 p-2 bg-slate-800/90 hover:bg-slate-700 text-white rounded-full transition">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
       <img id="modalImg" src="" alt="Zoomed Plot" class="w-full h-auto rounded-xl">
@@ -418,29 +778,32 @@
   </div>
 
   <!-- FOOTER -->
-  <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-6 text-center text-xs text-slate-500">
     <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-      <p>Sanskrit Pronunciation Assessment Engine · KIIT Deemed to be University</p>
-      <p>B.Tech 5th Sem · CS30033 Speech & Video Processing Assignment</p>
+      <p>Vāc-Bodha (वाग्बोध) · Sanskrit Speech Processing Engine</p>
+      <p class="font-mono">KIIT School of Computer Engineering · CS30033 Speech & Video Processing</p>
     </div>
   </footer>
 
-  <!-- JAVASCRIPT APPLICATION LOGIC -->
+  <!-- SCRIPT -->
   <script>
-    // State
+    // State Variables
     let activeMode = 'mic';
     let mediaRecorder = null;
     let audioStream = null;
     let audioContext = null;
+    let analyser = null;
+    let visualizerAnimationId = null;
     let recAudioBuffer = [];
     let recStartTime = 0;
     let recTimerInterval = null;
     let isRecording = false;
     let recordedWavBlob = null;
     let currentPlots = {};
+    let latestAssessmentData = null;
 
-    // Mode Switching
-    function switchMode(mode) {
+    // --- TAB SWITCHER ---
+    function switchStudioMode(mode) {
       activeMode = mode;
       const modes = ['mic', 'file', 'compare'];
       modes.forEach(m => {
@@ -448,10 +811,10 @@
         const btn = document.getElementById('tabBtn' + capitalize(m));
         if (m === mode) {
           el.classList.remove('hidden');
-          btn.className = "flex items-center gap-2 pb-3 px-2 text-sm font-bold border-b-2 border-indigo-600 text-indigo-600 transition";
+          btn.className = "flex items-center gap-2 pb-2 text-sm font-bold border-b-2 border-emerald-400 text-emerald-400 transition whitespace-nowrap";
         } else {
           el.classList.add('hidden');
-          btn.className = "flex items-center gap-2 pb-3 px-2 text-sm font-semibold text-slate-500 hover:text-slate-800 border-b-2 border-transparent transition";
+          btn.className = "flex items-center gap-2 pb-2 text-sm font-semibold text-slate-400 hover:text-slate-200 border-b-2 border-transparent transition whitespace-nowrap";
         }
       });
     }
@@ -460,7 +823,76 @@
       return s.charAt(0).toUpperCase() + s.slice(1);
     }
 
-    // --- MODE 1: MIC RECORDING (PURE IEEE 16-BIT PCM WAV) ---
+    // --- LIVE AUDIO SPECTRUM VISUALIZER (CANVAS) ---
+    function initVisualizerCanvas() {
+      const canvas = document.getElementById('liveVisualizer');
+      const ctx = canvas.getContext('2d');
+      canvas.width = canvas.parentElement.clientWidth * 2;
+      canvas.height = 160;
+
+      // Draw resting state idle wave
+      function drawIdle() {
+        if (isRecording) return;
+        ctx.fillStyle = '#050811';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = '#1e293b';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        const midY = canvas.height / 2;
+        ctx.moveTo(0, midY);
+        for (let x = 0; x < canvas.width; x += 5) {
+          ctx.lineTo(x, midY + Math.sin(x * 0.02 + Date.now() * 0.002) * 4);
+        }
+        ctx.stroke();
+        requestAnimationFrame(drawIdle);
+      }
+      drawIdle();
+    }
+
+    function startLiveVisualizer(stream) {
+      const canvas = document.getElementById('liveVisualizer');
+      const ctx = canvas.getContext('2d');
+      
+      const source = audioContext.createMediaStreamSource(stream);
+      analyser = audioContext.createAnalyser();
+      analyser.fftSize = 256;
+      source.connect(analyser);
+
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+
+      function renderFrame() {
+        if (!isRecording) return;
+        visualizerAnimationId = requestAnimationFrame(renderFrame);
+
+        analyser.getByteFrequencyData(dataArray);
+
+        ctx.fillStyle = '#050811';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const barWidth = (canvas.width / bufferLength) * 1.8;
+        let barHeight;
+        let x = 0;
+
+        for (let i = 0; i < bufferLength; i++) {
+          barHeight = (dataArray[i] / 255) * canvas.height * 0.9;
+
+          // Gradient bar
+          const grad = ctx.createLinearGradient(0, canvas.height, 0, canvas.height - barHeight);
+          grad.addColorStop(0, '#059669');
+          grad.addColorStop(0.6, '#10b981');
+          grad.addColorStop(1, '#38bdf8');
+
+          ctx.fillStyle = grad;
+          ctx.fillRect(x, canvas.height - barHeight, barWidth - 2, barHeight);
+
+          x += barWidth;
+        }
+      }
+      renderFrame();
+    }
+
+    // --- MICROPHONE RECORDING (PURE 16-BIT PCM WAV) ---
     async function toggleRecording() {
       if (isRecording) {
         stopRecording();
@@ -481,34 +913,35 @@
 
         processor.onaudioprocess = (e) => {
           if (!isRecording) return;
-          const channelData = e.inputBuffer.getChannelData(0);
-          recAudioBuffer.push(new Float32Array(channelData));
+          recAudioBuffer.push(new Float32Array(e.inputBuffer.getChannelData(0)));
         };
 
         source.connect(processor);
         processor.connect(audioContext.destination);
 
+        // Start Spectrum Visualizer
+        startLiveVisualizer(stream);
+
         isRecording = true;
         recStartTime = Date.now();
-        document.getElementById('recordBtn').classList.add('pulse-record', 'bg-red-700');
+        document.getElementById('recordBtn').classList.add('pulse-record', 'from-red-600', 'to-red-700');
         document.getElementById('recordIcon').setAttribute('data-lucide', 'square');
-        document.getElementById('recordStatus').innerText = "Recording... Click to Stop";
-        document.getElementById('recordStatus').className = "mt-3 text-xs font-bold tracking-wide text-red-600 uppercase";
+        document.getElementById('recordStatus').innerText = "RECORDING NOW — SPEAK 'KRISHNA'";
+        document.getElementById('recordStatus').className = "mt-4 text-xs font-mono font-bold tracking-widest text-red-500 uppercase animate-pulse";
 
         recTimerInterval = setInterval(() => {
           const elapsed = (Date.now() - recStartTime) / 1000;
           const mins = Math.floor(elapsed / 60).toString().padStart(2, '0');
-          const secs = Math.floor(elapsed % 60).toString().padStart(2, '0');
+          const secs = (elapsed % 60).toFixed(1).padStart(4, '0');
           document.getElementById('recordTimer').innerText = `${mins}:${secs}`;
-          // Auto-stop at 5 seconds
           if (elapsed >= 5.0) {
             stopRecording();
           }
-        }, 100);
+        }, 80);
 
         lucide.createIcons();
       } catch (err) {
-        showError("Microphone access denied or not available: " + err.message);
+        showError("Microphone access error: " + err.message);
       }
     }
 
@@ -516,20 +949,21 @@
       if (!isRecording) return;
       isRecording = false;
       clearInterval(recTimerInterval);
+      if (visualizerAnimationId) cancelAnimationFrame(visualizerAnimationId);
 
       if (audioStream) {
         audioStream.getTracks().forEach(t => t.stop());
       }
 
-      document.getElementById('recordBtn').classList.remove('pulse-record', 'bg-red-700');
+      document.getElementById('recordBtn').classList.remove('pulse-record', 'from-red-600', 'to-red-700');
       document.getElementById('recordIcon').setAttribute('data-lucide', 'mic');
-      document.getElementById('recordStatus').innerText = "Recording Complete";
-      document.getElementById('recordStatus').className = "mt-3 text-xs font-semibold tracking-wide text-emerald-600 uppercase";
+      document.getElementById('recordStatus').innerText = "RECORDING FINISHED";
+      document.getElementById('recordStatus').className = "mt-4 text-xs font-mono font-bold tracking-widest text-emerald-400 uppercase";
       lucide.createIcons();
 
-      // Encode audio buffer to standard 16-bit PCM WAV
-      const totalSamples = recAudioBuffer.reduce((acc, b) => acc + b.length, 0);
-      const merged = new Float32Array(totalSamples);
+      // Encode buffer to 16-bit PCM WAV
+      const totalLen = recAudioBuffer.reduce((a, b) => a + b.length, 0);
+      const merged = new Float32Array(totalLen);
       let offset = 0;
       for (const b of recAudioBuffer) {
         merged.set(b, offset);
@@ -541,50 +975,34 @@
       const player = document.getElementById('micAudioPlayback');
       player.src = audioUrl;
 
+      const durSec = (totalLen / (audioContext.sampleRate || 16000)).toFixed(2);
+      document.getElementById('recordedDurationLabel').innerText = `${durSec}s (16-bit PCM)`;
       document.getElementById('micPreviewContainer').classList.remove('hidden');
     }
 
-    // Standard 16-bit PCM WAV Encoder in pure JS
+    // WAV Encoder
     function encodeWAV(samples, sampleRate) {
       const buffer = new ArrayBuffer(44 + samples.length * 2);
       const view = new DataView(buffer);
-
-      // RIFF identifier
       writeString(view, 0, 'RIFF');
-      // file length
       view.setUint32(4, 36 + samples.length * 2, true);
-      // RIFF type
       writeString(view, 8, 'WAVE');
-      // format chunk identifier
       writeString(view, 12, 'fmt ');
-      // format chunk length
       view.setUint32(16, 16, true);
-      // sample format (raw PCM)
-      view.setUint16(20, 1, true);
-      // channel count (1 = mono)
-      view.setUint16(22, 1, true);
-      // sample rate
+      view.setUint16(20, 1, true); // PCM
+      view.setUint16(22, 1, true); // Mono
       view.setUint32(24, sampleRate, true);
-      // byte rate (sample rate * block align)
       view.setUint32(28, sampleRate * 2, true);
-      // block align (channel count * bytes per sample)
       view.setUint16(32, 2, true);
-      // bits per sample
       view.setUint16(34, 16, true);
-      // data chunk identifier
       writeString(view, 36, 'data');
-      // data chunk length
       view.setUint32(40, samples.length * 2, true);
-
-      // Write PCM 16-bit samples
       let idx = 44;
       for (let i = 0; i < samples.length; i++) {
         let s = Math.max(-1, Math.min(1, samples[i]));
-        s = s < 0 ? s * 0x8000 : s * 0x7FFF;
-        view.setInt16(idx, s, true);
+        view.setInt16(idx, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
         idx += 2;
       }
-
       return new Blob([view], { type: 'audio/wav' });
     }
 
@@ -594,7 +1012,7 @@
       }
     }
 
-    // --- MODE 2: FILE UPLOAD PREVIEW ---
+    // --- FILE UPLOAD HANDLERS ---
     let selectedStudentFile = null;
     function handleStudentFileSelected(e) {
       const file = e.target.files[0];
@@ -607,10 +1025,8 @@
       document.getElementById('filePreviewContainer').classList.remove('hidden');
     }
 
-    // --- MODE 3: CUSTOM COMPARISON PREVIEWS ---
     let customRefFile = null;
     let customTestFile = null;
-
     function handleCustomRefSelected(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -619,7 +1035,6 @@
       document.getElementById('customRefPlayer').src = URL.createObjectURL(file);
       document.getElementById('customRefPreview').classList.remove('hidden');
     }
-
     function handleCustomTestSelected(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -629,7 +1044,37 @@
       document.getElementById('customTestPreview').classList.remove('hidden');
     }
 
-    // --- API SUBMISSION & ACOUSTIC ASSESSMENT ---
+    // --- QUICK BENCHMARK SAMPLES ---
+    async function runSample(sampleId) {
+      hideError();
+      showLoading(true, `Loading "${sampleId}" audio sample...`);
+      try {
+        const response = await fetch(`/api/sample/${sampleId}`);
+        if (!response.ok) throw new Error("Could not load sample audio.");
+        const blob = await response.blob();
+        
+        const formData = new FormData();
+        formData.append("test_file", blob, `sample_${sampleId}.wav`);
+
+        showLoading(true, "Running full 7-step MFCC & DTW evaluation...");
+        const assessRes = await fetch("/api/assess", {
+          method: "POST",
+          body: formData
+        });
+        if (!assessRes.ok) {
+          const errData = await assessRes.json();
+          throw new Error(errData.detail || "Assessment failed");
+        }
+        const data = await assessRes.json();
+        renderResults(data);
+      } catch (err) {
+        showError(err.message);
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    // --- SUBMISSION VIA API ---
     async function submitAssessment(mode) {
       hideError();
       const formData = new FormData();
@@ -642,32 +1087,30 @@
         formData.append("test_file", recordedWavBlob, "live_mic_recording.wav");
       } else if (mode === 'file') {
         if (!selectedStudentFile) {
-          showError("Please select an audio file to upload.");
+          showError("Please select an audio file first.");
           return;
         }
         formData.append("test_file", selectedStudentFile, selectedStudentFile.name);
       } else if (mode === 'compare') {
         if (!customRefFile || !customTestFile) {
-          showError("Please select both Reference and Learner audio files.");
+          showError("Please select both Reference and Learner files.");
           return;
         }
         formData.append("ref_file", customRefFile, customRefFile.name);
         formData.append("test_file", customTestFile, customTestFile.name);
       }
 
-      showLoading(true);
+      showLoading(true, "Computing 7-Step MFCC · Dynamic Time Warping · Levinson-Durbin LPC Formants");
 
       try {
         const response = await fetch("/api/assess", {
           method: "POST",
           body: formData
         });
-
         if (!response.ok) {
           const errData = await response.json();
-          throw new Error(errData.detail || "Assessment failed on server.");
+          throw new Error(errData.detail || "Server processing failed.");
         }
-
         const data = await response.json();
         renderResults(data);
       } catch (err) {
@@ -677,39 +1120,40 @@
       }
     }
 
-    // --- RENDER RESULTS & PLOTS ---
+    // --- RENDER ASSESSMENT RESULTS ---
     function renderResults(data) {
+      latestAssessmentData = data;
       const scores = data.scores;
       const meta = data.metadata;
       currentPlots = data.plots;
 
-      // Update Gauge
       const overall = scores['Overall'];
       document.getElementById('scoreNumber').innerText = `${overall.toFixed(1)}%`;
-      
+
       const circle = document.getElementById('scoreCircle');
-      const circumference = 2 * Math.PI * 42; // ~263.89
+      const circumference = 2 * Math.PI * 42;
       const offset = circumference - (overall / 100) * circumference;
       circle.style.strokeDasharray = `${circumference}`;
       circle.style.strokeDashoffset = `${offset}`;
 
-      // Update Badge & Color
       const badge = document.getElementById('scoreBadge');
+      const desc = document.getElementById('scoreDescription');
+
       if (overall >= 80) {
-        badge.className = "inline-block px-3 py-1 rounded-full text-xs font-extrabold uppercase bg-emerald-100 text-emerald-800";
-        badge.innerText = "EXCELLENT";
-        circle.setAttribute('class', 'text-emerald-500 transition-all duration-1000 ease-out');
-        document.getElementById('scoreDescription').innerText = "Pristine Sanskrit articulation. Phonetic formant trajectories align closely with the native reference.";
+        badge.className = "inline-block px-3 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/30";
+        badge.innerText = "EXCELLENT (उत्कृष्ट)";
+        circle.setAttribute('class', 'text-emerald-400 transition-all duration-1000 ease-out');
+        desc.innerText = "Pristine Sanskrit articulation. Retroflex consonant dynamics and vocal tract formant resonances align tightly with the Vedic master.";
       } else if (overall >= 65) {
-        badge.className = "inline-block px-3 py-1 rounded-full text-xs font-extrabold uppercase bg-amber-100 text-amber-800";
-        badge.innerText = "GOOD";
-        circle.setAttribute('class', 'text-amber-500 transition-all duration-1000 ease-out');
-        document.getElementById('scoreDescription').innerText = "Good articulation with slight pitch or timing variations. Clear Devanagari vowel resonances detected.";
+        badge.className = "inline-block px-3 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider bg-cyan-500/10 text-cyan-400 border border-cyan-500/30";
+        badge.innerText = "GOOD (मध्यम)";
+        circle.setAttribute('class', 'text-cyan-400 transition-all duration-1000 ease-out');
+        desc.innerText = "Clear articulation with slight syllable tempo elongation or minor pitch variations. Devanagari vowel resonances detected.";
       } else {
-        badge.className = "inline-block px-3 py-1 rounded-full text-xs font-extrabold uppercase bg-rose-100 text-rose-800";
-        badge.innerText = "NEEDS WORK";
-        circle.setAttribute('class', 'text-rose-500 transition-all duration-1000 ease-out');
-        document.getElementById('scoreDescription').innerText = "Acoustic divergence observed. Check vowel formants and syllable duration against the master recording.";
+        badge.className = "inline-block px-3 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider bg-rose-500/10 text-rose-400 border border-rose-500/30";
+        badge.innerText = "NEEDS WORK (पुनः प्रयासो विधेयः)";
+        circle.setAttribute('class', 'text-rose-400 transition-all duration-1000 ease-out');
+        desc.innerText = "Acoustic divergence observed. Noticeable deviation in retroflex 'ṣ' (ष) turbulence or vocalic 'ṛ' (ऋ) formant frequencies.";
       }
 
       // Metadata
@@ -717,19 +1161,20 @@
       document.getElementById('metaFrames').innerText = meta.test_frames;
       document.getElementById('metaDuration').innerText = `${meta.test_duration_sec}s`;
 
-      // 5-Point Metrics
+      // 5 Metrics
       setMetric('MFCC', scores['MFCC Similarity']);
       setMetric('Spectral', scores['Spectral Similarity']);
       setMetric('Duration', scores['Duration Match']);
       setMetric('Mel', scores['Mel Energy Similarity']);
       setMetric('Dynamics', scores['Temporal Dynamics']);
 
-      // Show first plot (Summary Report)
+      // Show summary report plot by default
       showPlot('report');
 
-      // Unhide Results Section & scroll into view
-      document.getElementById('resultsSection').classList.remove('hidden');
-      document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+      // Reveal Results section smoothly
+      const resultsSec = document.getElementById('resultsSection');
+      resultsSec.classList.remove('hidden');
+      resultsSec.scrollIntoView({ behavior: 'smooth' });
     }
 
     function setMetric(name, val) {
@@ -737,41 +1182,131 @@
       document.getElementById(`bar${name}`).style.width = `${Math.min(100, Math.max(0, val))}%`;
     }
 
+    // --- PLOT VIEWER & THEORY ANNOTATIONS ---
+    const plotDescriptions = {
+      report: "📊 ASSESSMENT SUMMARY: Radar chart and horizontal bar breakdown comparing all 5 acoustic parameters against the golden standard.",
+      waveform: "📈 TIME-DOMAIN WAVEFORM: Displays the amplitude envelope over time. Note the silence trimming (VAD) and syllable envelope alignment.",
+      spectrogram: "🌈 WIDEBAND & NARROWBAND SPECTROGRAMS: Wideband (5ms window) resolves vocal tract formant bands; Narrowband (40ms window) reveals fine harmonic pitch tracks.",
+      mfcc: "🔥 13-MFCC HEATMAP MATRIX: Visualizes the 13 cepstral coefficients across time frames. Highlights phonetic transition contours across consonants and vowels.",
+      dtw: "⚡ DTW ALIGNMENT MATRIX: The optimal blue path traces minimum cumulative Euclidean distance through the cost surface, compensating for variable speaking tempo.",
+      lpc: "🎯 LPC SPECTRAL ENVELOPE (p=16): Deconvolves vocal tract resonance poles (F1, F2, F3) from glottal excitation via Levinson-Durbin recursion."
+    };
+
     function showPlot(key) {
       if (!currentPlots[key]) return;
       document.getElementById('activePlotImg').src = 'data:image/png;base64,' + currentPlots[key];
+      document.getElementById('plotTheoryExplanation').innerText = plotDescriptions[key] || "";
 
       const tabs = ['report', 'waveform', 'spectrogram', 'mfcc', 'dtw', 'lpc'];
       tabs.forEach(t => {
         const btn = document.getElementById(`plotTab_${t}`);
         if (t === key) {
-          btn.className = "px-3 py-1.5 text-xs font-bold rounded-lg bg-white shadow-sm text-slate-900 transition";
+          btn.className = "px-3 py-1.5 text-xs font-bold rounded-lg bg-emerald-500 text-slate-950 transition";
         } else {
-          btn.className = "px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition";
+          btn.className = "px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition";
         }
       });
     }
 
-    // Fullscreen Modal
+    function downloadCurrentPlot() {
+      const src = document.getElementById('activePlotImg').src;
+      if (!src) return;
+      const a = document.createElement('a');
+      a.href = src;
+      a.download = 'sanskrit_acoustic_plot.png';
+      a.click();
+    }
+
+    function exportJsonReport() {
+      if (!latestAssessmentData) return;
+      const jsonStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(latestAssessmentData, null, 2));
+      const a = document.createElement('a');
+      a.href = jsonStr;
+      a.download = `sanskrit_pronunciation_report_${Date.now()}.json`;
+      a.click();
+    }
+
+    function resetStudio() {
+      document.getElementById('resultsSection').classList.add('hidden');
+      document.getElementById('micPreviewContainer').classList.add('hidden');
+      document.getElementById('filePreviewContainer').classList.add('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // --- MODAL ZOOM ---
     function openModal() {
       const src = document.getElementById('activePlotImg').src;
       if (!src) return;
       document.getElementById('modalImg').src = src;
-      const modal = document.getElementById('imageModal');
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
+      const m = document.getElementById('imageModal');
+      m.classList.remove('hidden');
+      m.classList.add('flex');
     }
-
     function closeModal() {
-      const modal = document.getElementById('imageModal');
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
+      const m = document.getElementById('imageModal');
+      m.classList.add('hidden');
+      m.classList.remove('flex');
     }
 
-    // UI Helpers
-    function showLoading(show) {
+    // --- AUDIO PLAYER HELPERS ---
+    function toggleAudioPlayback(audioId, btnId, iconId) {
+      const audio = document.getElementById(audioId);
+      const icon = document.getElementById(iconId);
+      if (audio.paused) {
+        audio.play();
+        icon.setAttribute('data-lucide', 'pause');
+      } else {
+        audio.pause();
+        icon.setAttribute('data-lucide', 'play');
+      }
+      lucide.createIcons();
+    }
+
+    function seekAudio(audioId, percent) {
+      const audio = document.getElementById(audioId);
+      if (audio.duration) {
+        audio.currentTime = (percent / 100) * audio.duration;
+      }
+    }
+
+    function hookAudioTimeUpdates(audioId, seekId, curTimeId, totTimeId, btnId, iconId) {
+      const audio = document.getElementById(audioId);
+      if (!audio) return;
+
+      audio.addEventListener('timeupdate', () => {
+        if (!audio.duration) return;
+        const seek = document.getElementById(seekId);
+        if (seek) seek.value = (audio.currentTime / audio.duration) * 100;
+        const curEl = document.getElementById(curTimeId);
+        if (curEl) curEl.innerText = formatTime(audio.currentTime);
+      });
+
+      audio.addEventListener('loadedmetadata', () => {
+        const totEl = document.getElementById(totTimeId);
+        if (totEl) totEl.innerText = formatTime(audio.duration);
+      });
+
+      audio.addEventListener('ended', () => {
+        const icon = document.getElementById(iconId);
+        if (icon) icon.setAttribute('data-lucide', 'play');
+        const seek = document.getElementById(seekId);
+        if (seek) seek.value = 0;
+        lucide.createIcons();
+      });
+    }
+
+    function formatTime(sec) {
+      if (isNaN(sec)) return "00:00";
+      const m = Math.floor(sec / 60).toString().padStart(2, '0');
+      const s = Math.floor(sec % 60).toString().padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
+    // --- UTILITIES ---
+    function showLoading(show, text) {
       const el = document.getElementById('loadingSection');
       if (show) {
+        if (text) document.getElementById('loadingStatusText').innerText = text;
         el.classList.remove('hidden');
       } else {
         el.classList.add('hidden');
@@ -787,9 +1322,13 @@
       document.getElementById('errorAlert').classList.add('hidden');
     }
 
-    // Initialize Lucide Icons
+    // --- INIT ---
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
+      initVisualizerCanvas();
+      hookAudioTimeUpdates('masterAudio', 'masterSeek', 'masterCurrentTime', 'masterTotalTime', 'masterPlayBtn', 'masterPlayIcon');
+      hookAudioTimeUpdates('micAudioPlayback', 'micSeek', 'micCurrentTime', 'micTotalTime', 'micPlayBtn', 'micPlayIcon');
+      hookAudioTimeUpdates('fileAudioPlayback', 'fileSeek', 'fileCurrentTime', 'fileTotalTime', 'filePlayBtn', 'filePlayIcon');
     });
   </script>
 </body>
